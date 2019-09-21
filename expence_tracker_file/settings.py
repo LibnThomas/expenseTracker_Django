@@ -25,7 +25,9 @@ SECRET_KEY = '$k44c2nzce+t73*sbza79dl+0j=_b2zx8$2xs8bk&^cy^=vjug'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'https://exptracker001.herokuapp.com/',
+]
 
 
 # Application definition
