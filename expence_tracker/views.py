@@ -1,10 +1,35 @@
 from django.shortcuts import render
-from .models import History
-
-tracker={"Available Balance":0}		
+from .models import History,db_login
+	
 his=""
 summ=""
 # Create your views here.
+def loginfun(request):
+	try:
+		print(request.POST)
+		if(request.POST.get("btn_login")!=None):
+			if(q=db_login.objects.get(request.POST["username"])):
+				if(q.upass==request.POST["password"]):
+					print("Login Success")
+					return render(request,"login.html",{"msg":"Login Success"})
+				else:
+					return render(request,"login.html",{"msg":"Incorrect Password"})
+			else:
+				return render(request,"login.html",{"msg":"Incorrect User Name"})
+
+		if(request.POST.get("btn_signin")!=None):
+			if(db_login.objects.get(request.POST["uname"])):
+				return render(request,"login.html",{"msg":"User Name Exists"})
+			else:
+				if(request.POST["pass"]==request.POST["conf_pass"]):
+					q=db_login.objects.create(uname=request.POST["uname"],upass=request.POST["pass"])
+				else:
+					return render(request,"login.html",{"msg":"Password Doesn't Match"})
+
+
+	except Exception as e:
+		return render(request,"login.html",{"msg":"Something Went Wrong!"})
+	return render(request,"login.html")
 def expence(request):
 	global tracker,his,summ
 	History.objects.get_or_create(item="balance")
@@ -47,51 +72,6 @@ def expence(request):
 				qq.save()
 				bal=qq.price
 
-
-			# qq=History.objects.get(id="1")
-			# print(qq)
-			# # for i in qq:
-			# qq.price=20
-			# qq.item="food"
-			# qq.save()
-
-			# qr=History.objects.filter(item="food")
-			# for i in qr:
-			# 	print("filter :",i.item,i.price)
-
-			# q=History.objects.all()
-			# for i in q:
-			# 	print("all :",i.item)
-
-			# h_list=History.objects.raw('select * FROM expence_tracker_history')
-			# print("database",h_list)
-			# for i in h_list:
-			# 	print("value in db",i.id,i.item,i.price)
-
-
-
-			# if(tracker.get(a)!=None):
-			# 	tracker[a]=tracker[a]+b
-			# 	tracker["Available Balance"]=tracker["Available Balance"]-b
-			# 	if(tracker["Available Balance"]<0):
-			# 		print("\n You have insufficient Balance!")
-			# 		tracker["Available Balance"]=tracker["Available Balance"]+b
-			# 		tracker[a]=tracker[a]-b
-			# 		history()
-			# 		save1()
-			# 		return render(request,"expence.html",{"balance":tracker["Available Balance"],"history":his,"errormsg":"You have insufficient Balance!"})
-
-			# else:
-			# 	tracker[a]=b
-			# 	tracker["Available Balance"]=tracker["Available Balance"]-b
-			# 	if(tracker["Available Balance"]<0):
-			# 		print("\n You have insufficient Balance!")
-			# 		tracker["Available Balance"]=tracker["Available Balance"]+b
-			# 		del tracker[a]
-			# 		history()
-			# 		save1()
-			# 		return render(request,"expence.html",{"balance":tracker["Available Balance"],"history":his,"errormsg":"You have insufficient Balance!"})
-
 		history()
 		return render(request,"expence.html",{"balance":bal,"history":his,"summ":summ})
 	except Exception as e:
@@ -110,7 +90,7 @@ def summary():
 		if(i!="balance"):
 			qq=History.objects.all()
 			for j in qq:
-				if(i==j.item):
+				if(i.lower()==j.item.lower()):
 					print(j.item,j.price)
 					itemsum=itemsum+int(j.price)
 			summ=summ+"<tr><td>"+i+"</td><td>"+str(itemsum)+"</td></tr>"
