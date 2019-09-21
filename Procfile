@@ -1,1 +1,1 @@
-web: gunicorn projectname.wsgi --log-file -
+web: gunicorn expence_tracker_file.wsgi --log-file -
