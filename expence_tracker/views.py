@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.contrib.auth import login,authenticate
+from django.contrib.auth.models import User
 from .models import History,db_login
 	
 his=""
@@ -8,25 +10,25 @@ def loginfun(request):
 	try:
 		print(request.POST)
 		if(request.POST.get("btn_login")!=None):
-			if(q=db_login.objects.get(request.POST["username"])):
-				if(q.upass==request.POST["password"]):
+			if(User.objects.get(username=request.POST["username"])):
+				q=User.objects.get(request.POST["username"])
+				if(q.password==request.POST["password"]):
 					print("Login Success")
-					return render(request,"login.html",{"msg":"Login Success"})
+					return render(request,"expence.html")
 				else:
 					return render(request,"login.html",{"msg":"Incorrect Password"})
 			else:
 				return render(request,"login.html",{"msg":"Incorrect User Name"})
 
 		if(request.POST.get("btn_signin")!=None):
-			if(db_login.objects.get(request.POST["uname"])):
+			if(User.objects.get(request.POST["uname"])):
 				return render(request,"login.html",{"msg":"User Name Exists"})
 			else:
 				if(request.POST["pass"]==request.POST["conf_pass"]):
-					q=db_login.objects.create(uname=request.POST["uname"],upass=request.POST["pass"])
+					q=User.objects.create_user(username=request.POST["uname"],password=request.POST["pass"])
+					q.save()
 				else:
 					return render(request,"login.html",{"msg":"Password Doesn't Match"})
-
-
 	except Exception as e:
 		return render(request,"login.html",{"msg":"Something Went Wrong!"})
 	return render(request,"login.html")
