@@ -1,1 +1,1 @@
-web: gunicorn expence_tracker_file.wsgi --log-file -
+web: python manage.py runserver 0.0.0.0:$PORT
