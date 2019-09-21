@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Expense Tracker</title>
+	<!-- <meta charset="utf-8"> -->
+	<!-- <meta content="width=device-width, initial-scale=1.0" name="viewport"> -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<style type="text/css">
+		table {
+		  border-collapse: collapse;
+		  width: 100%;
+		}
+
+		th, td {
+		  padding: 8px; 
+		  text-align: left;
+		  border-bottom: 1px solid #ddd;
+		}
+
+		tr:hover {
+			background-color:#f5f5f5;
+		}
+	</style>
+</head>
+<body style="padding: 20px;">
+	<div style="text-align: center;"><h1>Expense Tracker</h1></div>
+	<div style="text-align: center;"><p><font color="red">{{errormsg}}</font></p></div>
+	<div class="row">
+		<div class="col md-4" style="border-right: 1px solid #ddd;">
+			<h5>Available Balance : {{balance}}</h5>
+			<button class="form-control btn-success" onclick="document.getElementById('adbal').style.display='block';document.getElementById('btnadd').style.display='none';" id="btnadd">Add Money</button><br>
+			<div id="adbal" style="display: none;">
+				<form method="POST">
+					{%csrf_token%}
+					<input type="text" class="form-control" placeholder="Enter Amount To Add" name="amount" autocomplete="off"><br>
+					<input type="submit" name="addbalance" class="form-control btn-info" value="Add">
+				</form>
+			</div>
+		</div>
+		<div class="col md-4" style="border-right: 1px solid #ddd;">
+			<form method="POST" name="itemform">
+				{%csrf_token%}
+				<input type="text" class="form-control" name="item" placeholder="Item" style="width: 250px;float: left;">
+				<input type="text" class="form-control" name="price" placeholder="Price" style="width: 160px;float: right;"><br><br>
+				<input type="submit" name="additem" class="form-control btn-primary" value="Add Item" style="width: 150px;float: right;"><br>
+				<h5 align="center">History</h5>
+				<div style="text-align: center;">
+					<table>
+						<tr>
+							<th>Item's</th>
+							<th>Amount</th>
+						</tr>
+						{{history|safe}}
+					</table>
+				</div>
+			</form>
+		</div>
+		<div class="col md-4">
+			<h5 align="center">Summary</h5>
+			<div style="text-align: center;">
+				<table>
+					<tr>
+						<th>Item's</th>
+						<th>Amount</th>
+					</tr>
+					{{summ|safe}}
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+
+
+
+</html>
