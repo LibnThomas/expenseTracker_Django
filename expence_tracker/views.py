@@ -93,7 +93,7 @@ def expence(request):
 def summary(request):
 	global summ
 	itemsum=0
-	q=History.objects.filter(uid=request.user.username).values_list('item', flat=True).distinct()
+	q=History.objects.filter(uid=request.user.username).values_list('item'.lower(), flat=True).distinct()
 	for i in q:
 		if(i!="balance"):
 			qq=History.objects.filter(uid=request.user.username)
