@@ -4,4 +4,4 @@ from django.db import models
 class History(models.Model):
 	item=models.CharField(max_length=10)
 	price=models.IntegerField(max_length=10,default=0)
-	uid=models.CharField(max_length=10)
+	uid=models.CharField(max_length=150)
