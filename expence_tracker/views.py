@@ -1,109 +1,113 @@
-from django.shortcuts import render
-from django.contrib.auth import login,authenticate
+from django.shortcuts import render,redirect
+from django.contrib.auth import login,authenticate,logout
 from django.contrib.auth.models import User
-from .models import History,db_login
+from .models import History
 	
 his=""
 summ=""
+loguser = None
 # Create your views here.
 def loginfun(request):
 	try:
-		print(request.POST)
 		if(request.POST.get("btn_login")!=None):
-			if(User.objects.get(username=request.POST["username"])):
-				q=User.objects.get(request.POST["username"])
-				if(q.password==request.POST["password"]):
-					print("Login Success")
-					return render(request,"expence.html")
-				else:
-					return render(request,"login.html",{"msg":"Incorrect Password"})
+			user=authenticate(username=request.POST["username"],password=request.POST["pass"])
+			if(user!=None):
+				login(request,user)
+				print("Login Success")
+				return redirect("expence")
 			else:
-				return render(request,"login.html",{"msg":"Incorrect User Name"})
+				return render(request,"login.html",{"msg":"Incorrect User Name/Password"})
 
 		if(request.POST.get("btn_signin")!=None):
-			if(User.objects.get(request.POST["uname"])):
+			try:
+				a=User.objects.get(username=request.POST["uname"])
 				return render(request,"login.html",{"msg":"User Name Exists"})
-			else:
+
+			
+			except:
 				if(request.POST["pass"]==request.POST["conf_pass"]):
-					q=User.objects.create_user(username=request.POST["uname"],password=request.POST["pass"])
+					q=User.objects.create_user(username=request.POST["uname"],password=request.POST["pass"],first_name=request.POST["fname"],last_name=request.POST["lname"])
 					q.save()
 				else:
 					return render(request,"login.html",{"msg":"Password Doesn't Match"})
 	except Exception as e:
+		print("error :",e)
 		return render(request,"login.html",{"msg":"Something Went Wrong!"})
 	return render(request,"login.html")
 def expence(request):
-	global tracker,his,summ
-	History.objects.get_or_create(item="balance")
+	global tracker,his,summ,loguser
+	History.objects.get_or_create(item="balance",uid=request.user.username)
 	summ=""
 	his=""
-	A_bal=History.objects.get(item="balance")
+	A_bal=History.objects.get(item="balance",uid=request.user.username)
 	bal=A_bal.price
-	print(request.POST)
 	try:
+		print(request.user.username)
+		if (request.user.is_authenticated):
+			loguser=request.user.first_name+" "+request.user.last_name
+		else:
+			return redirect("login")
+		if(request.POST.get("logout")!=None):
+			logout(request)
+			return redirect("login")
 
 		if(request.POST.get("addbalance")!=None):
-			q=History.objects.get(item="balance")
+			q=History.objects.get(item="balance",uid=request.user.username)
 			q.price=int(q.price)+int(request.POST["amount"])
 			q.save()
-			history()
+			history(request)
 			bal=q.price
-			return render(request,"expence.html",{"balance":bal,"history":his,"summ":summ})
+			return render(request,"expence.html",{"balance":bal,"history":his,"summ":summ,"username":loguser})
 
 		if(request.POST.get("btndel")!=None):
 			q=History.objects.get(id=request.POST["btndel"])
-			q1=History.objects.get(item="balance")
+			q1=History.objects.get(item="balance",uid=request.user.username)
 			q1.price=int(q1.price)+q.price
 			q1.save()
 			q.delete()
-			history()
+			history(request)
 			bal=q1.price
-			return render(request,"expence.html",{"balance":bal,"history":his,"summ":summ})
+			return render(request,"expence.html",{"balance":bal,"history":his,"summ":summ,"username":loguser})
 
 		if(request.POST.get("additem")!=None):
 			a=request.POST["item"]
 			b=request.POST['price']
-			qq=History.objects.get(item="balance")
+			qq=History.objects.get(item="balance",uid=request.user.username)
 			if(int(qq.price)-int(b)<0):
-				history()
-				return render(request,"expence.html",{"balance":bal,"history":his,"summ":summ,"errormsg":"You Have Insufficient Balance"})
+				history(request)
+				return render(request,"expence.html",{"balance":bal,"history":his,"summ":summ,"errormsg":"You Have Insufficient Balance","username":loguser})
 			else:
-				item=History.objects.create(item=a,price=b)
+				item=History.objects.create(item=a,price=b,uid=request.user.username)
 				item.save()
 				qq.price=int(qq.price)-int(b)
 				qq.save()
 				bal=qq.price
 
-		history()
-		return render(request,"expence.html",{"balance":bal,"history":his,"summ":summ})
+		history(request)
+		return render(request,"expence.html",{"balance":bal,"history":his,"summ":summ,"username":loguser})
 	except Exception as e:
 		print("error",e)
-		history()
-		return render(request,"expence.html",{"balance":bal,"history":his,"summ":summ,"errormsg":"Enter Correct Cardinalities!"})
+		history(request)
+		return render(request,"expence.html",{"balance":bal,"history":his,"summ":summ,"errormsg":"Enter Correct Cardinalities!","username":loguser})
 
-def summary():
+def summary(request):
 	global summ
 	itemsum=0
-	print(summ,"hello")
-	q=History.objects.all().values_list('item', flat=True).distinct()
-	print(q)
+	q=History.objects.filter(uid=request.user.username).values_list('item', flat=True).distinct()
 	for i in q:
-		print(i)
 		if(i!="balance"):
-			qq=History.objects.all()
+			qq=History.objects.filter(uid=request.user.username)
 			for j in qq:
 				if(i.lower()==j.item.lower()):
-					print(j.item,j.price)
 					itemsum=itemsum+int(j.price)
 			summ=summ+"<tr><td>"+i+"</td><td>"+str(itemsum)+"</td></tr>"
-		print(itemsum)
 		itemsum=0
 
-def history():
+def history(request):
 	global his
 	c=0
-	summary()
-	q=History.objects.all()
+	summary(request)
+	q=History.objects.filter(uid=request.user.username)
 	for i in q:
 		if(i.item!="balance"):
 			his=his+"<tr><td>"+i.item+"</td><td>"+str(i.price)+"<button onclick='itemform_form.submit();' name='btndel' class='form-control btn-danger' value='"+str(i.id)+"' style='width: 100px;float: right;'>Delete</button></td></tr>"
