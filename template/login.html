@@ -4,12 +4,22 @@
 <head>
 	<title>Login</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<style type="text/css">
+		body { 
+		  background-image: url('/static/img/bg1.png');
+		  background-repeat: no-repeat;
+		  background-attachment: fixed;
+		  background-position: center; 
+		  background-size: cover;
+		  padding: 20px;
+		}
+	</style>
 </head>
-<body>
+<body >
 	<div style="text-align: center;"><h6><font color="red">{{msg}}</font></h6></div>
 	<div class="row" style="padding: 20px;" style="text-align: center;">
-		<div class="col md-4"></div>
-		<div class="col md-4" id="login" style="text-align: center;display: block;">
+		<div class="col-lg-3 col-md-3 col-sm-3"></div>
+		<div class="col-lg-6 col-md-6 col-sm-6" id="login" style="text-align: center;display: block;">
 			<h5>Sign In</h5>
 			<form method="POST">
 				{%csrf_token%}
@@ -19,7 +29,7 @@
 			</form>
 			<button class="form-control btn-success" onclick="document.getElementById('login').style.display='none';document.getElementById('signup').style.display='block';">Sign UP</button><br><br>
 		</div>
-		<div class="col md-4" id="signup" style="display: none;text-align: center;">
+		<div class="col-lg-6 col-md-6 col-sm-6" id="signup" style="display: none;text-align: center;">
 			<form method="POST">
 				{%csrf_token%}
 				<h5>Sign UP</h5><br>
@@ -31,7 +41,7 @@
 				<input type="submit" class="form-control btn-success" name="btn_signin" value="Sign Up" onclick="document.getElementById('login').style.display='block';document.getElementById('signup').style.display='none';">
 			</form>
 		</div>
-		<div class="col md-4"></div>
+		<div class="col-lg-3 col-md-3 col-sm-3"></div>
 	</div>
 </body>
 </html>

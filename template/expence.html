@@ -6,6 +6,26 @@
 	<!-- <meta content="width=device-width, initial-scale=1.0" name="viewport"> -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<style type="text/css">
+		body { 
+		  background-image: url('/static/img/bg.jpg');
+		  background-repeat: no-repeat;
+		  background-attachment: fixed;
+		  background-position: center; 
+		  background-size: cover;
+		  padding: 20px;
+		/*  background-image: linear-gradient(blue, white);
+		  background-repeat: no-repeat;
+		  background-position: center;
+		  padding: 20px; */
+		}
+		.bg{
+			background-color: rgba(0,0,0,0.4);
+			padding: 10px;
+			text-shadow: 2px 2px 10px black;
+			border: 3px solid #dadada;
+			font-weight: bolder;
+			color: white;
+		}
 		table {
 		  border-collapse: collapse;
 		  width: 100%;
@@ -19,6 +39,7 @@
 
 		tr:hover {
 			background-color:#f5f5f5;
+			border-radius: 10px;
 		}
 	</style>
 	<style>
@@ -48,9 +69,9 @@
 </style>
 
 </head>
-<body style="padding: 20px;">
+<body>
 	<div class="dropdown">
-		<h5 align="right">{{username|safe}}</h5>
+		<h5 align="right" style="font-weight: bold;color: white;text-shadow: 2px 2px 5px black;">{{username|safe}}</h5>
 		<div class="dropdown-content">
 			<form method="POST">
 				{%csrf_token%}
@@ -58,11 +79,11 @@
 			</form>
 		</div>
 	</div>
-	<div style="text-align: center;"><h1>Expense Tracker</h1></div>
-	<div style="text-align: center;"><p><font color="red">{{errormsg}}</font></p></div>
-	<div class="row">
-		<div class="col md-4" style="border-right: 1px solid #ddd;">
-			<h5>Available Balance : {{balance}}</h5>
+	<div style="text-align: center;color: white;text-shadow: 2px 2px 5px black;"><h1>Expense Tracker</h1></div>
+	<div style="text-align: center;font-weight: bolder;text-shadow: 2px 2px 5px black;"><p><font color="red">{{errormsg}}</font></p></div>
+	<div class="row bg">
+		<div class="col-lg-3 col-md-3 col-sm-3" style="border-right: 1px solid #ddd;">
+			<h5>Available Balance :{{balance|safe}}</h5>
 			<button class="form-control btn-success" onclick="document.getElementById('adbal').style.display='block';document.getElementById('btnadd').style.display='none';" id="btnadd">Add Money</button><br>
 			<div id="adbal" style="display: none;">
 				<form method="POST">
@@ -72,25 +93,36 @@
 				</form>
 			</div>
 		</div>
-		<div class="col md-4" style="border-right: 1px solid #ddd;">
+		<div class="col-lg-7 col-md-7 col-sm-7" style="border-right: 1px solid #ddd;">
 			<form method="POST" name="itemform">
 				{%csrf_token%}
-				<input type="text" class="form-control" name="item" placeholder="Item" style="width: 250px;float: left;">
-				<input type="text" class="form-control" name="price" placeholder="Price" style="width: 160px;float: right;"><br><br>
-				<input type="submit" name="additem" class="form-control btn-primary" value="Add Item" style="width: 150px;float: right;"><br>
+				<div class="row">
+					<div class="col-lg-4 col-md-4 col-sm-4">
+						<input type="text" class="form-control" name="item" placeholder="Item">
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-4">
+						<input type="text" class="form-control" name="price" placeholder="Price"><br><br>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-4">
+						<input type="submit" name="additem" class="form-control btn-primary" value="Add Item"><br>
+					</div>
+				</div>
 				<h5 align="center">History</h5>
 				<div style="text-align: center;">
 					<table>
 						<tr>
 							<th>Item's</th>
+							<th>Date</th>
+							<th>Time</th>
 							<th>Amount</th>
+							<th></th>
 						</tr>
 						{{history|safe}}
 					</table>
 				</div>
 			</form>
 		</div>
-		<div class="col md-4">
+		<div class="col-lg-2 col-md-2 col-sm-2">
 			<h5 align="center">Summary</h5>
 			<div style="text-align: center;">
 				<table>
