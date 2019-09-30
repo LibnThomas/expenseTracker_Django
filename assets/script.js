@@ -33,18 +33,7 @@ function createPie(dataElement, pieElement) {
     listTotal += listData[i];
   }
   var offset = 0;
-  var color = [
-    "cornflowerblue", 
-    "olivedrab", 
-    "orange", 
-    "tomato", 
-    "crimson", 
-    "purple", 
-    "turquoise", 
-    "forestgreen", 
-    "navy", 
-    "gray"
-  ];
+  var color = ["cornflowerblue","olivedrab","orange","#E30B5C","tomato","crimson","purple","turquoise","forestgreen","navy","gray","Olive","Pear","#483C32","#D2B48C","#A7FC00","#C0C0C0","#92000A","#40826D","#7F00FF","#000080","#702963","#7FFF00"," #007BA7","#B87333","Ochre","Navy blue"];
   for(var i=0; i<listData.length; i++) {
     var size = sliceSize(listData[i], listTotal);
     iterateSlices(size, pieElement, offset, i, 0, color[i]);
