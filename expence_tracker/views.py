@@ -1,12 +1,17 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import login,authenticate,logout
 from django.contrib.auth.models import User
+from django.db.models import Sum,Q
 from .models import History
+from django.http import HttpResponse
+import json
+import math
 	
 his=""
 summ=""
 loguser = None
 bal=""
+grap=""
 # Create your views here.
 def loginfun(request):
 	try:
@@ -37,7 +42,7 @@ def loginfun(request):
 	return render(request,"login.html")
 	
 def expence(request):
-	global tracker,his,summ,loguser,bal
+	global tracker,his,summ,loguser,bal,grap
 	History.objects.get_or_create(item="balance",uid=request.user.username)
 	summ=""
 	his=""
@@ -97,6 +102,32 @@ def expence(request):
 		lowbal(str(bal))
 		return render(request,"expence.html",{"balance":bal,"history":his,"summ":summ,"errormsg":"Enter Correct Cardinalities!","username":loguser})
 
+def summary_chart(request):
+	global summ,grap
+	dic={}
+	grap=""
+	itemsum=0
+	try:
+		q=History.objects.filter(uid=request.user.username).values_list('item'.lower(), flat=True).distinct()
+		q1=History.objects.filter(~Q(item="balance"),uid=request.user.username).aggregate(Sum('price'))
+		print("hell12o",q1["price__sum"])
+		for i in q:
+			if(i!="balance"):
+				qq=History.objects.filter(uid=request.user.username)
+				for j in qq:
+					if(i.lower()==j.item.lower()):
+						itemsum=itemsum+int(j.price)
+				per=(itemsum/int(q1["price__sum"]))*100
+				grap=grap+"<li><em>"+i+"</em><span>"+str(round(per,2))+"</span></li>"
+			itemsum=0
+		dic["ans"]=grap
+		dic["status"]=True
+	except Exception as e:
+		print(e)
+		dic["status"]=False
+	jsondata=json.dumps(dic)
+	return HttpResponse(jsondata,content_type="application/json")
+
 def lowbal(request):
 	global bal
 	if(int(bal)<10):
@@ -105,6 +136,7 @@ def lowbal(request):
 		bal="<font color='orange'>"+str(bal)+"</font>"
 	else:
 		bal="<font color='lightgreen'>"+str(bal)+"</font>"
+
 def summary(request):
 	global summ
 	itemsum=0
