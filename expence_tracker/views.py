@@ -108,7 +108,12 @@ def summary_chart(request):
 	grap=""
 	itemsum=0
 	try:
-		q=History.objects.filter(uid=request.user.username).values_list('item'.lower(), flat=True).distinct()
+		# q=History.objects.filter(uid=request.user.username).values_list('item'.lower(), flat=True).distinct()
+		allObj=History.objects.filter(uid=request.user.username)
+		disObj=set()
+		for i in allObj:
+			disObj.add(i.item.lower())
+		q=list(disObj)
 		q1=History.objects.filter(~Q(item="balance"),uid=request.user.username).aggregate(Sum('price'))
 		print("hell12o",q1["price__sum"])
 		for i in q:
