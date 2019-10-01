@@ -117,8 +117,8 @@ def summary_chart(request):
 				for j in qq:
 					if(i.lower()==j.item.lower()):
 						itemsum=itemsum+int(j.price)
-				per=(itemsum/int(q1["price__sum"]))*100
-				grap=grap+"<li><em>"+i+"</em><span>"+str(round(per,2))+"</span></li>"
+				# per=(itemsum/int(q1["price__sum"]))*100
+				grap=grap+"<li><em>"+i+"</em><span>"+str(itemsum)+"</span></li>"
 			itemsum=0
 		dic["ans"]=grap
 		dic["status"]=True
@@ -141,12 +141,15 @@ def summary(request):
 	global summ
 	itemsum=0
 	q=History.objects.filter(uid=request.user.username).values_list('item'.lower(), flat=True).distinct()
+	print("distint select values ",q)
 	for i in q:
 		if(i!="balance"):
 			qq=History.objects.filter(uid=request.user.username)
+			print("not balance",qq)
 			for j in qq:
 				if(i.lower()==j.item.lower()):
 					itemsum=itemsum+int(j.price)
+					print(" i.lower()",i.lower(),"\n j.item.lower() ",j.item.lower())
 			summ=summ+"<tr><td>"+i+"</td><td>"+str(itemsum)+"</td></tr>"
 		itemsum=0
 
