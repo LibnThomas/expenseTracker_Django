@@ -26,7 +26,7 @@ SECRET_KEY = '$k44c2nzce+t73*sbza79dl+0j=_b2zx8$2xs8bk&^cy^=vjug'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    # 'exptracker001.herokuapp.com',
+    'exptracker001.herokuapp.com',
 ]
 
 
@@ -88,8 +88,8 @@ DATABASES = {
         "HOST":"localhost",
     }
 }
-# prod_db = dj_database_url.config(conn_max_age=500)
-# DATABASES['default'].update(prod_db)
+prod_db = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(prod_db)
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
